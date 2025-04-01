@@ -4,7 +4,7 @@ namespace RealEstateRentalMgmt.Services
 {
     public interface IBuildingService
     {
-        List<BuildingResponseDTO> FindAll(Dictionary<string, object> parameters, List<string> typeCodes);
+        List<BuildingResponseDTO> FindAll(BuildingSearchDTO searchDTO);
         void SaveBuilding(BuildingDTO buildingDTO);
         void DeleteBuilding(long[] ids);
     }

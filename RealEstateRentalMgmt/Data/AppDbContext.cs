@@ -41,6 +41,10 @@ namespace RealEstateRentalMgmt.Data
 
             // Cấu hình ánh xạ property với cột trong bảng building
             modelBuilder.Entity<Building>()
+                .Property(b => b.Id)
+                .HasColumnName("id");
+
+            modelBuilder.Entity<Building>()
                 .Property(b => b.Name)
                 .HasColumnName("name");
 
@@ -166,6 +170,10 @@ namespace RealEstateRentalMgmt.Data
                 .HasColumnName("name");
 
             // Cấu hình ánh xạ property với cột trong bảng rentarea
+            modelBuilder.Entity<RentArea>()
+                .Property(r => r.Id)
+                .HasColumnName("id");
+
             modelBuilder.Entity<RentArea>()
                 .Property(r => r.Value)
                 .HasColumnName("value");

@@ -11,16 +11,15 @@ namespace RealEstateRentalMgmt.Controllers
     {
         private readonly IBuildingService _buildingService;
 
-        // Constructor yêu cầu interface IBuildingService thay vì BuildingService trực tiếp
         public BuildingController(IBuildingService buildingService)
         {
             _buildingService = buildingService;
         }
 
         [HttpGet]
-        public IActionResult GetBuildings([FromQuery] Dictionary<string, object> parameters, [FromQuery] List<string> typeCode)
+        public IActionResult GetBuildings([FromQuery] BuildingSearchDTO searchDTO)
         {
-            var buildings = _buildingService.FindAll(parameters, typeCode);
+            var buildings = _buildingService.FindAll(searchDTO);
             return Ok(buildings);
         }
 

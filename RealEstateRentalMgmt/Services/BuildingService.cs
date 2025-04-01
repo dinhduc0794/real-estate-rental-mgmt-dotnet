@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RealEstateRentalMgmt.Data;
+﻿using RealEstateRentalMgmt.Data;
 using RealEstateRentalMgmt.Models;
 using RealEstateRentalMgmt.Models.Builders;
 using RealEstateRentalMgmt.Models.DTOs;
@@ -9,44 +8,21 @@ namespace RealEstateRentalMgmt.Services
 {
     public class BuildingService : IBuildingService
     {
-        private readonly AppDbContext _context;
+        private readonly BuildingRepository _buildingRepository;
         private readonly BuildingConverter _buildingConverter;
         private readonly BuildingSearchBuilderConverter _builderConverter;
 
-        public BuildingService(AppDbContext context, BuildingConverter buildingConverter, BuildingSearchBuilderConverter builderConverter)
+        public BuildingService(BuildingRepository buildingRepository, BuildingConverter buildingConverter, BuildingSearchBuilderConverter builderConverter)
         {
-            _context = context;
+            _buildingRepository = buildingRepository;
             _buildingConverter = buildingConverter;
             _builderConverter = builderConverter;
         }
 
-        public List<BuildingResponseDTO> FindAll(Dictionary<string, object> parameters, List<string> typeCodes)
+        public List<BuildingResponseDTO> FindAll(BuildingSearchDTO searchDTO)
         {
-            var builder = _builderConverter.ToBuildingSearchBuilder(parameters, typeCodes);
-
-            var query = _context.Buildings
-                .Include(b => b.District)
-                .Include(b => b.RentAreas)
-                .AsQueryable();
-
-            // Điều kiện WHERE
-            if (!string.IsNullOrEmpty(builder.Name))
-                query = query.Where(b => b.Name.Contains(builder.Name));
-            if (!string.IsNullOrEmpty(builder.Ward))
-                query = query.Where(b => b.Ward.Contains(builder.Ward));
-            if (!string.IsNullOrEmpty(builder.Street))
-                query = query.Where(b => b.Street.Contains(builder.Street));
-            if (builder.RentPriceFrom.HasValue)
-                query = query.Where(b => b.RentPrice >= builder.RentPriceFrom.Value);
-            if (builder.RentPriceTo.HasValue)
-                query = query.Where(b => b.RentPrice <= builder.RentPriceTo.Value);
-            if (builder.RentAreaFrom.HasValue)
-                query = query.Where(b => b.RentAreas.Any(ra => ra.Value >= builder.RentAreaFrom.Value));
-            if (builder.RentAreaTo.HasValue)
-                query = query.Where(b => b.RentAreas.Any(ra => ra.Value <= builder.RentAreaTo.Value));
-            // StaffId và TypeCode sẽ được xử lý sau khi bạn thêm các entity liên quan (AssignmentBuilding, BuildingRentType)
-
-            var buildings = query.ToList();
+            var builder = _builderConverter.ToBuildingSearchBuilder(searchDTO);
+            var buildings = _buildingRepository.FindAll(builder).ToList();
             return buildings.Select(b => _buildingConverter.ToBuildingResponseDTO(b)).ToList();
         }
 
@@ -56,14 +32,12 @@ namespace RealEstateRentalMgmt.Services
 
             if (buildingDTO.Id.HasValue)
             {
-                building = _context.Buildings
-                    .Include(b => b.RentAreas)
-                    .FirstOrDefault(b => b.Id == buildingDTO.Id);
+                building = _buildingRepository.FindById(buildingDTO.Id.Value);
 
                 if (building != null)
                 {
                     // Xóa các RentArea hiện có
-                    _context.RentAreas.RemoveRange(building.RentAreas);
+                    _buildingRepository.DeleteRentAreas(building.RentAreas);
                 }
                 else
                 {
@@ -80,13 +54,12 @@ namespace RealEstateRentalMgmt.Services
             // Lưu Building
             if (buildingDTO.Id.HasValue)
             {
-                _context.Buildings.Update(building);
+                _buildingRepository.Update(building);
             }
             else
             {
-                _context.Buildings.Add(building);
+                _buildingRepository.Add(building);
             }
-            _context.SaveChanges();
 
             // Lưu RentAreas
             foreach (var value in buildingDTO.RentAreas)
@@ -96,25 +69,23 @@ namespace RealEstateRentalMgmt.Services
                     BuildingId = building.Id,
                     Value = value
                 };
-                _context.RentAreas.Add(rentArea);
+                _buildingRepository.AddRentArea(rentArea);
             }
-            _context.SaveChanges();
+
+            _buildingRepository.SaveChanges();
         }
 
         public void DeleteBuilding(long[] ids)
         {
-            var buildings = _context.Buildings
-                .Include(b => b.RentAreas)
-                .Where(b => ids.Contains(b.Id))
-                .ToList();
+            var buildings = _buildingRepository.FindByIds(ids);
 
             foreach (var building in buildings)
             {
-                _context.RentAreas.RemoveRange(building.RentAreas);
+                _buildingRepository.DeleteRentAreas(building.RentAreas);
             }
 
-            _context.Buildings.RemoveRange(buildings);
-            _context.SaveChanges();
+            _buildingRepository.DeleteRange(buildings);
+            _buildingRepository.SaveChanges();
         }
     }
 }
