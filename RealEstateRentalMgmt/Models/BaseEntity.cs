@@ -6,12 +6,12 @@ namespace RealEstateRentalMgmt.Models
     {
         public long Id { get; set; }
         [Column("createddate")]
-        public string CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         [Column("modifieddate")]
-        public string ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
         [Column("createdby")]
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
         [Column("modifiedby")]
-        public string ModifiedBy { get; set; }
+        public string? ModifiedBy { get; set; }
     }
 }

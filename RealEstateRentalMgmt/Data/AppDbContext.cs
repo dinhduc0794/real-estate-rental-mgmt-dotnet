@@ -179,7 +179,7 @@ namespace RealEstateRentalMgmt.Data
         {
             UpdateAuditFields();
             return base.SaveChanges();
-        }
+        }   
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -194,12 +194,12 @@ namespace RealEstateRentalMgmt.Data
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    entry.Entity.CreatedDate = DateTime.Now;
                     entry.Entity.CreatedBy = "System";
                 }
                 else if (entry.State == EntityState.Modified)
                 {
-                    entry.Entity.ModifiedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    entry.Entity.ModifiedDate = DateTime.Now;
                     entry.Entity.ModifiedBy = "System";
                 }
             }

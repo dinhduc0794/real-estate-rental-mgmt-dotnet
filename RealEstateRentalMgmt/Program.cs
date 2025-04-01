@@ -1,7 +1,9 @@
-
+﻿
 namespace RealEstateRentalMgmt;
 using Microsoft.EntityFrameworkCore;
 using RealEstateRentalMgmt.Data;
+using RealEstateRentalMgmt.Services.Converters;
+using RealEstateRentalMgmt.Services;
 
 public class Program
 {
@@ -12,18 +14,23 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllers();
 
-        // ??c chu?i k?t n?i t? appsettings.json
+        // Đọc chuỗi kết nối từ appsettings.json
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        // ??ng k� AppDbContext v?i MySQL
+        // Đăng ký AppDbContext với MySQL
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-            options.EnableSensitiveDataLogging(); // T??ng ?ng v?i spring.jpa.show-sql = true
-            options.EnableDetailedErrors(); // Hi?n th? l?i chi ti?t khi debug
+            options.EnableSensitiveDataLogging();
+            options.EnableDetailedErrors();
         });
 
-        // ??ng k� c�c repository
+        // Đăng ký các service và converter
+        builder.Services.AddScoped<IBuildingService, BuildingService>();
+        builder.Services.AddScoped<BuildingConverter>();
+        builder.Services.AddScoped<BuildingSearchBuilderConverter>();
+
+        // Đăng ký các repository
         builder.Services.AddScoped<BuildingRepository>();
         builder.Services.AddScoped<DistrictRepository>();
         builder.Services.AddScoped<RentAreaRepository>();
