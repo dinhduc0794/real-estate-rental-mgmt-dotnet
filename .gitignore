@@ -1,0 +1,96 @@
+# .NET Core / ASP.NET Core
+## Ignore build output
+bin/
+obj/
+*.csproj.user
+
+## Ignore runtime files
+*.dll
+*.exe
+*.pdb
+*.mdb
+
+## Ignore NuGet packages
+*.nupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+## Ignore Visual Studio temporary files, build results, and user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vs/
+.vscode/
+*.code-workspace
+
+## Ignore Visual Studio Code settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## Ignore Rider (JetBrains) files
+.idea/
+*.iml
+
+## Ignore test results
+TestResults/
+*.trx
+*.xml
+
+## Ignore logs
+*.log
+logs/
+*.log.*
+
+## Ignore environment-specific files
+appsettings.Development.json
+appsettings.Production.json
+
+## Ignore secrets and sensitive data
+secrets.json
+*.key
+*.pem
+*.pfx
+
+## Ignore dependency directories
+node_modules/
+
+## Ignore temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+## Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+## Ignore database files (if any)
+*.mdf
+*.ldf
+
+## Ignore compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+## Ignore coverage reports
+coverage/
+*.lcov
+
+## Ignore local environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+## Ignore migration files (optional, if you don't want to commit migrations)
+# Migrations/
